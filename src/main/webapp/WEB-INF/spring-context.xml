@@ -10,6 +10,7 @@
 	http://www.springframework.org/schema/context/spring-context-3.0.xsd">
 
     <import resource="jaxws.xml" />
+    <import resource="mongodb.xml" />
 
     <context:component-scan base-package="fr.soart" />
 

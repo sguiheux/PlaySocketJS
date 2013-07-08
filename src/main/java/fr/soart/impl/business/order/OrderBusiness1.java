@@ -1,18 +1,20 @@
 package fr.soart.impl.business.order;
 
+import fr.soart.impl.annotation.Business;
 import fr.soart.engine.business.AbstractOrderBusiness;
-import fr.soart.engine.business.EnumBusinessService;
 import fr.soart.engine.model.AbstractModel;
 import fr.soart.impl.converter.OrderBusiness1ToSimpleBusiness1;
 import fr.soart.impl.model.OrderBusiness1Model;
+import fr.soart.impl.model.SimpleBusiness1Model;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Resource;
 
 /**
- * Sample Order Business.
+ * Sample StepOrder Business.
  */
+@Business
 @Component
 @Scope(value = "prototype")
 public class OrderBusiness1 extends AbstractOrderBusiness{
@@ -29,15 +31,21 @@ public class OrderBusiness1 extends AbstractOrderBusiness{
         super();
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
-    public AbstractModel convert(int identifiant) {
-        if(identifiant == EnumBusinessService.BUSINESS_1.id){
-             return converterToSimpleBusiness.convert((OrderBusiness1Model) this.model);
-        }
+    public boolean isAsynchronous() {
+        return false;
+    }
+
+    @Override
+    public AbstractModel convert(AbstractModel model) {
+        logger.error("Erreur on ne doit pas arriver ici");
         return null;
+    }
+
+    public OrderBusiness1Model convert(SimpleBusiness1Model m){
+        OrderBusiness1Model o = new OrderBusiness1Model();
+        o.setTata(m.getText());
+        return o;
     }
 
 

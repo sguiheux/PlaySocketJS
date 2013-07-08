@@ -12,27 +12,22 @@ public abstract class AbstractBusiness {
     /** Logger. */
     protected Logger logger;
 
-    /**
-     * Model de la classe business.
-     */
-    protected AbstractModel model;
-
     public AbstractBusiness(){
         logger = LoggerFactory.getLogger(this.getClass());
     }
 
     /**
-     * Initialisation du composant.
-     * @param model Model du composant
-     */
-    public void init(AbstractModel model){
-        this.model = model;
-    }
-
-    /**
      * Lancement du traitement du business.
      */
-    public abstract void call();
+    public abstract AbstractModel call(AbstractModel model);
+
+    /**
+     * Indique si le traitement est asynchrone ou non
+     * @return true si le traitement est asynchrone
+     */
+    public abstract boolean isAsynchronous();
+
+    public abstract AbstractModel convert(AbstractModel model);
 
 
 }

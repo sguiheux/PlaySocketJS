@@ -1,21 +1,23 @@
 package fr.soart.engine.business;
 
 import fr.soart.engine.model.AbstractModel;
+import org.springframework.beans.factory.InitializingBean;
 import org.springframework.context.ApplicationContext;
 
 import javax.annotation.Resource;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
- *
+ *   Classe abstraite pour la gestion des services d'ordonnancement
  */
-public abstract class AbstractOrderBusiness extends AbstractBusiness {
+public abstract class AbstractOrderBusiness extends AbstractBusiness implements InitializingBean {
 
     /**
      * Liste des étapes.
      */
-    Map<EnumBusinessService, Boolean> mapEtape;
+    List<String> listEtape;
 
     /**
      * Context Spring.
@@ -31,40 +33,51 @@ public abstract class AbstractOrderBusiness extends AbstractBusiness {
     }
 
     /**
-     * Convertit les données dans un format approprié
-     * @param destination Identifiant du model de destination
-     * @return
+     * {@inheritDoc}
      */
-    public abstract AbstractModel convert(int destination);
-
-
     @Override
-    public void call(){
+    public AbstractModel call(AbstractModel model){
+        boolean bool = process(model);
+        model.setTermine(bool);
+        return model;
+    }
+
+    /**
+     * {@inheritDoc}
+     * @throws Exception
+     */
+    @Override
+    public void afterPropertiesSet() throws Exception {
         recuperationEtape();
-        process();
     }
 
 
+    /**
+     * Lance le traitement.
+     */
+    private boolean process(AbstractModel model) {
+        for (String etape : listEtape) {
+                AbstractBusiness a = (AbstractBusiness) context.getBean(etape);
 
-    private void process() {
-        for (Map.Entry<EnumBusinessService, Boolean> entry : mapEtape.entrySet()) {
-            if (!entry.getValue().booleanValue()) {
-                EnumBusinessService e = entry.getKey();
-                AbstractBusiness a = (AbstractBusiness) context.getBean(e.name,e.c);
-                if(e.isSynchronous){
-                    a.init(convert(e.id));
-                    a.call();
-                    entry.setValue(true);
-                }
+                    AbstractModel modelDestination = a.convert(model);
+                    AbstractModel modelResult = a.call(modelDestination);
+                    model = convert(modelResult);
+            if(a.isAsynchronous()){
+                // Persistence en base
 
+
+                return false;
             }
         }
+        return true;
     }
 
+
+
+    /**
+     * Recuperation en base des etapes de traitement
+     */
     private void recuperationEtape(){
-        mapEtape = new HashMap<EnumBusinessService, Boolean>();
-        mapEtape.put(EnumBusinessService.BUSINESS_1,false);
-        mapEtape.put(EnumBusinessService.BUSINESS_1,false);
-        mapEtape.put(EnumBusinessService.BUSINESS_1,false);
+
     }
 }

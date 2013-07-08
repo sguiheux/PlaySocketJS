@@ -1,11 +1,19 @@
 package fr.soart.engine.model;
 
 /**
- * Created with IntelliJ IDEA.
- * User: Vv
- * Date: 04/07/13
- * Time: 08:32
- * To change this template use File | Settings | File Templates.
+ * Modele de donnee
  */
 public class AbstractModel {
+
+    /** Boolean indiquant si le traitemetn est fini. */
+    private boolean termine;
+
+    public void setTermine(boolean bool){
+        this.termine = bool;
+    }
+
+    protected boolean isTermine(){
+        return this.termine;
+    }
 }
+
