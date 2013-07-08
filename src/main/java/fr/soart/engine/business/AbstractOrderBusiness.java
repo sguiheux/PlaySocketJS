@@ -5,12 +5,10 @@ import org.springframework.beans.factory.InitializingBean;
 import org.springframework.context.ApplicationContext;
 
 import javax.annotation.Resource;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 /**
- *   Classe abstraite pour la gestion des services d'ordonnancement
+ * Classe abstraite pour la gestion des services d'ordonnancement
  */
 public abstract class AbstractOrderBusiness extends AbstractBusiness implements InitializingBean {
 
@@ -36,7 +34,7 @@ public abstract class AbstractOrderBusiness extends AbstractBusiness implements 
      * {@inheritDoc}
      */
     @Override
-    public AbstractModel call(AbstractModel model){
+    public AbstractModel call(AbstractModel model) {
         boolean bool = process(model);
         model.setTermine(bool);
         return model;
@@ -44,6 +42,7 @@ public abstract class AbstractOrderBusiness extends AbstractBusiness implements 
 
     /**
      * {@inheritDoc}
+     *
      * @throws Exception
      */
     @Override
@@ -51,33 +50,34 @@ public abstract class AbstractOrderBusiness extends AbstractBusiness implements 
         recuperationEtape();
     }
 
-
     /**
      * Lance le traitement.
      */
     private boolean process(AbstractModel model) {
-        for (String etape : listEtape) {
+        if (listEtape != null) {
+            for (String etape : listEtape) {
                 AbstractBusiness a = (AbstractBusiness) context.getBean(etape);
 
-                    AbstractModel modelDestination = a.convert(model);
-                    AbstractModel modelResult = a.call(modelDestination);
-                    model = convert(modelResult);
-            if(a.isAsynchronous()){
-                // Persistence en base
+                AbstractModel modelDestination = a.convert(model);
+                AbstractModel modelResult = a.call(modelDestination);
+                model = convert(modelResult);
+                if (a.isAsynchronous()) {
+                    // Persistence en base
 
 
-                return false;
+                    return false;
+                }
             }
+        } else {
+            this.logger.error("Aucune etape d'ordonnancement");
         }
         return true;
     }
 
-
-
     /**
      * Recuperation en base des etapes de traitement
      */
-    private void recuperationEtape(){
+    private void recuperationEtape() {
 
     }
 }

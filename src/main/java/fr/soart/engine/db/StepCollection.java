@@ -6,8 +6,8 @@ import org.springframework.data.mongodb.core.mapping.Document;
 /**
  *
  */
-@Document(collection = "stepOrder")
-public class StepOrder {
+@Document(collection = "step")
+public class StepCollection {
 
     @Id
     private     String id;

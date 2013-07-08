@@ -1,6 +1,7 @@
 package fr.soart.impl.loading;
 
-import fr.soart.engine.db.RefBusiness;
+
+import fr.soart.engine.db.BusinessCollection;
 import org.springframework.context.ApplicationEvent;
 import org.springframework.context.ApplicationListener;
 import org.springframework.data.mongodb.core.MongoOperations;
@@ -10,7 +11,6 @@ import org.springframework.stereotype.Component;
 
 import javax.annotation.Resource;
 import java.io.File;
-import java.io.IOException;
 import java.lang.annotation.Annotation;
 import java.net.URL;
 import java.util.ArrayList;
@@ -26,7 +26,6 @@ public class LoadingBean implements ApplicationListener {
     @Resource(name = "mongoTemplate")
     private MongoOperations mongoOperation;
 
-
     private void findClasses(File directory, String packageName) throws ClassNotFoundException {
         File[] files = directory.listFiles();
         for (File file : files) {
@@ -40,9 +39,10 @@ public class LoadingBean implements ApplicationListener {
                         classe = classe.replaceFirst(classe.substring(0, 1), classe.substring(0, 1).toLowerCase());
 
                         Query searchBusinessQuery = new Query(Criteria.where("springName").is(classe));
-                        RefBusiness savedBusiness = mongoOperation.findOne(searchBusinessQuery, RefBusiness.class);
+
+                        BusinessCollection savedBusiness = mongoOperation.findOne(searchBusinessQuery, BusinessCollection.class);
                         if (savedBusiness == null) {
-                            RefBusiness rb = new RefBusiness();
+                            BusinessCollection rb = new BusinessCollection();
                             rb.setSpringName(classe);
                             mongoOperation.save(rb);
                         }
@@ -72,11 +72,9 @@ public class LoadingBean implements ApplicationListener {
 
             }
             for (File directory : dirs) {
-                findClasses(directory, packageName);
+                //findClasses(directory, packageName);
             }
-        } catch (IOException e) {
-            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
-        } catch (ClassNotFoundException e) {
+        } catch (Exception e) {
             e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
         }
 
