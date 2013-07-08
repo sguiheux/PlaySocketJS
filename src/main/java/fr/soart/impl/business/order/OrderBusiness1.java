@@ -1,6 +1,5 @@
 package fr.soart.impl.business.order;
 
-import fr.soart.impl.annotation.Business;
 import fr.soart.engine.business.AbstractOrderBusiness;
 import fr.soart.engine.model.AbstractModel;
 import fr.soart.impl.converter.OrderBusiness1ToSimpleBusiness1;
@@ -14,7 +13,6 @@ import javax.annotation.Resource;
 /**
  * Sample StepOrder Business.
  */
-@Business
 @Component
 @Scope(value = "prototype")
 public class OrderBusiness1 extends AbstractOrderBusiness{

@@ -1,6 +1,5 @@
 package fr.soart.impl.business.simple;
 
-import fr.soart.impl.annotation.Business;
 import fr.soart.engine.business.AbstractSimpleBusiness;
 import fr.soart.engine.model.AbstractModel;
 import fr.soart.impl.model.OrderBusiness1Model;
@@ -11,7 +10,6 @@ import org.springframework.stereotype.Component;
 /**
  * Sample Business 1
  */
-@Business
 @Component
 @Scope(value = "prototype")
 public class SimpleBusiness1 extends AbstractSimpleBusiness {
