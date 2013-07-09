@@ -5,14 +5,10 @@ package fr.soart.engine.business;
  */
 public abstract class SimpleSoartService extends SoartService {
 
-
-
     /**
      * Constructeur.
      */
     public SimpleSoartService(){
         super();
     }
-
-
 }

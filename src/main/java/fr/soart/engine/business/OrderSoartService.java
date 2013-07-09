@@ -56,8 +56,6 @@ public abstract class OrderSoartService extends SoartService {
 
     /**
      * {@inheritDoc}
-     *
-     * @throws Exception
      */
     @PostConstruct
     public void init() throws Exception {
@@ -95,7 +93,13 @@ public abstract class OrderSoartService extends SoartService {
                     // Persistence en base
                     SavedBusiness sb = new SavedBusiness();
                     sb.setBusinessName(this.getClass().getName());
-                    sb.setIdCorrelation(modelResult.getIdCorrelation());
+                    if(modelResult.getIdCorrelation() != null){
+                        sb.setIdCorrelation(modelResult.getIdCorrelation());
+                    } else {
+                        logger.error("Identifiant de correlation non trouvé:");
+                        throw new RuntimeException("Identifiant de correlation non trouvé:");
+                    }
+
                     sb.setStepNumber(i);
                     sb.setModel(toXml(model));
                     savedBusinessDAO.save(sb);
@@ -114,7 +118,7 @@ public abstract class OrderSoartService extends SoartService {
      * @param message          Message du callback
      * @param simpleBusinessId identifiant du composant à l'origine du callback
      */
-    public void recover(String message, String simpleBusinessId, String id) {
+    public void recover(String message, String simpleBusinessId) {
         // Recuperation identifiant de correlation
         SoartService simpleBusiness = (SoartService) context.getBean(simpleBusinessId);
         AbstractModel simpleBusinessModel = simpleBusiness.toModel(message);

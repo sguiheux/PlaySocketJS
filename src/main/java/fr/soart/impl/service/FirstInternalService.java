@@ -3,7 +3,7 @@ package fr.soart.impl.service;
 import com.test.test.test_api.PortType;
 import com.test.test.test_api.Requete;
 import com.test.test.test_api.Response;
-import fr.soart.engine.db.BusinessCollection;
+import fr.soart.engine.db.ServiceCollection;
 import fr.soart.impl.business.order.OrderSoartService1;
 import fr.soart.impl.converter.FirstServiceToOrderBusiness1Converter;
 import fr.soart.impl.model.OrderBusiness1Model;
@@ -36,11 +36,11 @@ public class FirstInternalService implements PortType {
 
         OrderBusiness1Model l = (OrderBusiness1Model) business1.call(converter.convert(parameters));
 
-        BusinessCollection rb = new BusinessCollection();
+        ServiceCollection rb = new ServiceCollection();
         rb.setSpringName("rb");
         mongoOperation.save(rb);
 
-        BusinessCollection rb2 = new BusinessCollection();
+        ServiceCollection rb2 = new ServiceCollection();
         rb2.setSpringName("rb2");
         mongoOperation.save(rb2);
 

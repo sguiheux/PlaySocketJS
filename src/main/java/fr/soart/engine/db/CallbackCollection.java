@@ -6,48 +6,36 @@ import org.springframework.data.mongodb.core.mapping.Document;
 /**
  * Represente les callbacks persisté
  */
-@Document(collection = "callback")
+@Document(collection = "callbacks")
 public class CallbackCollection {
 
+    /** identifiant unique. */
     @Id
     private String id;
 
+    /** Message de callback. */
     private String message;
 
+    /** Nom du bean à reveiller. */
     private String orderBusinessId;
 
+    /** Nom du bean d'ou vient le callback. */
     private String simpleBusinessId;
 
     public String getId() {
         return id;
     }
 
-    public void setId(String id) {
-        this.id = id;
-    }
-
     public String getMessage() {
         return message;
-    }
-
-    public void setMessage(String message) {
-        this.message = message;
     }
 
     public String getOrderBusinessId() {
         return orderBusinessId;
     }
 
-    public void setOrderBusinessId(String orderBusinessId) {
-        this.orderBusinessId = orderBusinessId;
-    }
-
     public String getSimpleBusinessId() {
         return simpleBusinessId;
-    }
-
-    public void setSimpleBusinessId(String simpleBusinessId) {
-        this.simpleBusinessId = simpleBusinessId;
     }
 }
 
