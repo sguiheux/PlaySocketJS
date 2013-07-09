@@ -1,8 +1,14 @@
 package fr.soart.engine.business;
 
+import fr.soart.engine.db.SavedBusiness;
+import fr.soart.engine.db.StepCollection;
 import fr.soart.engine.model.AbstractModel;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.context.ApplicationContext;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.mongodb.core.query.Criteria;
+import org.springframework.data.mongodb.core.query.Query;
+import org.springframework.data.domain.Sort.Direction;
 
 import javax.annotation.Resource;
 import java.util.List;
@@ -15,7 +21,7 @@ public abstract class AbstractOrderBusiness extends AbstractBusiness implements 
     /**
      * Liste des étapes.
      */
-    List<String> listEtape;
+    List<StepCollection> listEtape;
 
     /**
      * Context Spring.
@@ -38,6 +44,7 @@ public abstract class AbstractOrderBusiness extends AbstractBusiness implements 
         boolean bool = process(model);
         model.setTermine(bool);
         return model;
+
     }
 
     /**
@@ -55,16 +62,24 @@ public abstract class AbstractOrderBusiness extends AbstractBusiness implements 
      */
     private boolean process(AbstractModel model) {
         if (listEtape != null) {
-            for (String etape : listEtape) {
-                AbstractBusiness a = (AbstractBusiness) context.getBean(etape);
+            for (StepCollection steps : listEtape) {
+                AbstractBusiness a = (AbstractBusiness) context.getBean(steps.getChildId());
 
                 AbstractModel modelDestination = a.convert(model);
                 AbstractModel modelResult = a.call(modelDestination);
-                model = convert(modelResult);
+                if(modelResult != null){
+                    model = convert(modelResult);
+                }
                 if (a.isAsynchronous()) {
                     // Persistence en base
+                    SavedBusiness sb = new SavedBusiness();
+                    sb.setBusinessName(this.getClass().getName());
 
+                    // TODO
+                    sb.setIdCorrelation("");
 
+                    sb.setModel(toXml(model));
+                    mongoOperation.save(sb);
                     return false;
                 }
             }
@@ -74,10 +89,14 @@ public abstract class AbstractOrderBusiness extends AbstractBusiness implements 
         return true;
     }
 
+    protected abstract String toXml(AbstractModel model);
+
     /**
      * Recuperation en base des etapes de traitement
      */
     private void recuperationEtape() {
-
+        Query searchEtapeQuery = new Query(Criteria.where("rootId").is(this.getClass().getName()));
+        searchEtapeQuery.with(new Sort(Direction.ASC, "stepOrder"));
+        this.listEtape = mongoOperation.find(searchEtapeQuery,StepCollection.class);
     }
 }

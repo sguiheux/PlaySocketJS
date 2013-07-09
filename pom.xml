@@ -25,12 +25,7 @@
             <artifactId>spring-context</artifactId>
             <version>${spring.version}</version>
         </dependency>
-        <dependency>
-            <groupId>io.netty</groupId>
-            <artifactId>netty-all</artifactId>
-            <version>4.0.0.CR9</version>
-            <scope>compile</scope>
-        </dependency>
+
         <!-- mongodb java driver -->
         <dependency>
             <groupId>org.mongodb</groupId>

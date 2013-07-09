@@ -30,6 +30,11 @@ public class OrderBusiness1 extends AbstractOrderBusiness{
     }
 
     @Override
+    protected String toXml(AbstractModel model) {
+        return null;
+    }
+
+    @Override
     public boolean isAsynchronous() {
         return false;
     }
