@@ -14,6 +14,7 @@ public class SavedBusiness {
     private String idCorrelation;
     private String businessName;
     private String model;
+    private int stepNumber;
 
     public String getId() {
         return id;
@@ -45,5 +46,13 @@ public class SavedBusiness {
 
     public void setModel(String model) {
         this.model = model;
+    }
+
+    public int getStepNumber() {
+        return stepNumber;
+    }
+
+    public void setStepNumber(int stepNumber) {
+        this.stepNumber = stepNumber;
     }
 }

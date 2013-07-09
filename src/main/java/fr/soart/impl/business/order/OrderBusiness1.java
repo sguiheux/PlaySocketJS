@@ -40,15 +40,25 @@ public class OrderBusiness1 extends AbstractOrderBusiness{
     }
 
     @Override
-    public AbstractModel convert(AbstractModel model) {
-        logger.error("Erreur on ne doit pas arriver ici");
-        return null;
+    public AbstractModel convertToMyModel(AbstractModel model) {
+        return null;  //To change body of implemented methods use File | Settings | File Templates.
     }
+
+    @Override
+    public void updateMyModel(AbstractModel myModel, AbstractModel model) {
+        //To change body of implemented methods use File | Settings | File Templates.
+    }
+
 
     public OrderBusiness1Model convert(SimpleBusiness1Model m){
         OrderBusiness1Model o = new OrderBusiness1Model();
         o.setTata(m.getText());
         return o;
+    }
+
+    @Override
+    protected AbstractModel toModel(String model) {
+        return null;  //To change body of implemented methods use File | Settings | File Templates.
     }
 
 

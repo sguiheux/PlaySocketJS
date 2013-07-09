@@ -29,14 +29,18 @@ public class SimpleBusiness1 extends AbstractSimpleBusiness {
     }
 
     @Override
-    public AbstractModel convert(AbstractModel model) {
-        logger.error("Erreur on ne doit pas arriver ici");
-        return null;
+    public AbstractModel convertToMyModel(AbstractModel model) {
+        return null;  //To change body of implemented methods use File | Settings | File Templates.
     }
 
-    public SimpleBusiness1Model convert(OrderBusiness1Model m){
+    @Override
+    protected AbstractModel toModel(String model) {
+        return null;  //To change body of implemented methods use File | Settings | File Templates.
+    }
+
+    public SimpleBusiness1Model convert(OrderBusiness1Model m) {
         SimpleBusiness1Model model = new SimpleBusiness1Model();
-        model.setText(m.getTata()+m.getToto());
+        model.setText(m.getTata() + m.getToto());
         return model;
     }
 

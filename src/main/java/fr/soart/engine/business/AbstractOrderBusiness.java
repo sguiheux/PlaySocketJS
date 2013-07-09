@@ -2,32 +2,39 @@ package fr.soart.engine.business;
 
 import fr.soart.engine.db.SavedBusiness;
 import fr.soart.engine.db.StepCollection;
+import fr.soart.engine.db.dao.SavedBusinessDAO;
+import fr.soart.engine.db.dao.StepCollectionDAO;
 import fr.soart.engine.model.AbstractModel;
-import org.springframework.beans.factory.InitializingBean;
 import org.springframework.context.ApplicationContext;
-import org.springframework.data.domain.Sort;
-import org.springframework.data.mongodb.core.query.Criteria;
-import org.springframework.data.mongodb.core.query.Query;
-import org.springframework.data.domain.Sort.Direction;
 
+import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
 import java.util.List;
 
 /**
  * Classe abstraite pour la gestion des services d'ordonnancement
  */
-public abstract class AbstractOrderBusiness extends AbstractBusiness implements InitializingBean {
+public abstract class AbstractOrderBusiness extends AbstractBusiness {
 
     /**
-     * Liste des étapes.
+     * Liste des étapes à ordonnancer.
      */
     List<StepCollection> listEtape;
-
     /**
      * Context Spring.
      */
     @Resource
     private ApplicationContext context;
+    /**
+     * Accès aux business sauvegardé
+     */
+    @Resource
+    private SavedBusinessDAO savedBusinessDAO;
+    /**
+     * Accès a la collection des etapes.
+     */
+    @Resource
+    private StepCollectionDAO stepCollectionDAO;
 
     /**
      * Constructeur du business
@@ -41,7 +48,7 @@ public abstract class AbstractOrderBusiness extends AbstractBusiness implements 
      */
     @Override
     public AbstractModel call(AbstractModel model) {
-        boolean bool = process(model);
+        boolean bool = process(model, 0);
         model.setTermine(bool);
         return model;
 
@@ -52,34 +59,49 @@ public abstract class AbstractOrderBusiness extends AbstractBusiness implements 
      *
      * @throws Exception
      */
-    @Override
-    public void afterPropertiesSet() throws Exception {
-        recuperationEtape();
+    @PostConstruct
+    public void init() throws Exception {
+        this.listEtape = stepCollectionDAO.find();
     }
 
     /**
      * Lance le traitement.
+     *
+     * @param model     Modele de données
+     * @param startStep etape de depart
      */
-    private boolean process(AbstractModel model) {
+    private boolean process(AbstractModel model, int startStep) {
+        // Y a t il des étapes
         if (listEtape != null) {
-            for (StepCollection steps : listEtape) {
+            // parcours des étapes
+            for (int i = startStep; i < listEtape.size(); i++) {
+                // recup de l'etape courante et du bean spring associé
+                StepCollection steps = listEtape.get(i);
                 AbstractBusiness a = (AbstractBusiness) context.getBean(steps.getChildId());
 
-                AbstractModel modelDestination = a.convert(model);
+                // Creation de la requete pour appeler ce traitement
+                AbstractModel modelDestination = a.convertToMyModel(model);
+
+                // Lancement du traitement
                 AbstractModel modelResult = a.call(modelDestination);
-                if(modelResult != null){
-                    model = convert(modelResult);
+
+                // Gestion du retour
+                if (modelResult != null) {
+                    updateMyModel(model, modelResult);
                 }
+
+                // Si etape asynchrone, sauvegarde en base
                 if (a.isAsynchronous()) {
                     // Persistence en base
                     SavedBusiness sb = new SavedBusiness();
                     sb.setBusinessName(this.getClass().getName());
 
-                    // TODO
+                    // TODO Gestion id correlation
                     sb.setIdCorrelation("");
+                    sb.setStepNumber(i);
 
                     sb.setModel(toXml(model));
-                    mongoOperation.save(sb);
+                    savedBusinessDAO.save(sb);
                     return false;
                 }
             }
@@ -89,14 +111,39 @@ public abstract class AbstractOrderBusiness extends AbstractBusiness implements 
         return true;
     }
 
+    /**
+     * Recover des callback
+     *
+     * @param message          Message du callback
+     * @param simpleBusinessId
+     */
+    public void recover(String message, String simpleBusinessId, String id) {
+        // TODO Gestion id correlation
+        SavedBusiness sb = savedBusinessDAO.findByIdCorrelation("");
+
+        String model = sb.getModel();
+        AbstractModel soartModel = toModel(model);
+
+        AbstractBusiness simpleBusiness = (AbstractBusiness) context.getBean(simpleBusinessId);
+        AbstractModel simpleBusinessModel = simpleBusiness.toModel(message);
+
+        updateMyModel(soartModel, simpleBusinessModel);
+
+        int startStep = sb.getStepNumber();
+
+
+        process(soartModel, startStep);
+
+    }
+
     protected abstract String toXml(AbstractModel model);
 
     /**
-     * Recuperation en base des etapes de traitement
+     * Met à jour le modele du business à partir d'un autre model
+     * @param myModel Modele à metter à jour
+     * @param model Modele distant
      */
-    private void recuperationEtape() {
-        Query searchEtapeQuery = new Query(Criteria.where("rootId").is(this.getClass().getName()));
-        searchEtapeQuery.with(new Sort(Direction.ASC, "stepOrder"));
-        this.listEtape = mongoOperation.find(searchEtapeQuery,StepCollection.class);
-    }
+    public abstract void updateMyModel(AbstractModel myModel,AbstractModel model);
+
+
 }

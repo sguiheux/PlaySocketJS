@@ -3,38 +3,52 @@ package fr.soart.engine.business;
 import fr.soart.engine.model.AbstractModel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.data.mongodb.core.MongoOperations;
-
-import javax.annotation.Resource;
 
 /**
- *  Represente un Service business.
+ * Represente un Service business.
  */
 public abstract class AbstractBusiness {
 
-    /** Logger. */
+    /**
+     * Logger.
+     */
     protected Logger logger;
 
-    /** Operation Mongo. */
-    @Resource(name = "mongoTemplate")
-    protected MongoOperations mongoOperation;
-
-    public AbstractBusiness(){
+    /**
+     * Constructeur.
+     * Initialisation du logger
+     */
+    public AbstractBusiness() {
         logger = LoggerFactory.getLogger(this.getClass());
     }
 
     /**
      * Lancement du traitement du business.
+     * @param model Modele de données manipulé par le business
+     * @return Modele de données mis à jour par l'ensemble des sous appels
      */
     public abstract AbstractModel call(AbstractModel model);
 
     /**
      * Indique si le traitement est asynchrone ou non
+     *
      * @return true si le traitement est asynchrone
      */
     public abstract boolean isAsynchronous();
 
-    public abstract AbstractModel convert(AbstractModel model);
+    /**
+     * Converti le modele passé en parametre dans le modele de sortie
+     * @param model Modele à convertir
+     * @return Modele cible
+     */
+    public abstract AbstractModel convertToMyModel(AbstractModel model);
+
+   /**
+     * Conversion du model (xml) vers le model java
+     * @param model à convertir
+     * @return  Model de destination
+     */
+    protected abstract AbstractModel toModel(String model);
 
 
 }
