@@ -1,6 +1,6 @@
 package fr.soart.engine.recovery;
 
-import fr.soart.engine.business.AbstractOrderBusiness;
+import fr.soart.engine.business.OrderSoartService;
 import fr.soart.engine.db.CallbackCollection;
 import fr.soart.engine.db.dao.CallbackCollectionDAO;
 import org.springframework.context.ApplicationContext;
@@ -28,7 +28,7 @@ public class CallbackRecovery {
 
             // TODO : Mode cluster -  Choix du noeud le plus adapter
             String message = callback.getMessage();
-            AbstractOrderBusiness business = context.getBean(callback.getOrderBusinessId(), AbstractOrderBusiness.class);
+            OrderSoartService business = context.getBean(callback.getOrderBusinessId(), OrderSoartService.class);
             business.recover(message, callback.getSimpleBusinessId(), callback.getId());
         }
     }

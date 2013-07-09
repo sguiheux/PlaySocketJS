@@ -1,6 +1,6 @@
 package fr.soart.impl.business.simple;
 
-import fr.soart.engine.business.AbstractSimpleBusiness;
+import fr.soart.engine.business.SimpleSoartService;
 import fr.soart.engine.model.AbstractModel;
 import fr.soart.impl.model.OrderBusiness1Model;
 import fr.soart.impl.model.SimpleBusiness1Model;
@@ -12,12 +12,12 @@ import org.springframework.stereotype.Component;
  */
 @Component
 @Scope(value = "prototype")
-public class SimpleBusiness1 extends AbstractSimpleBusiness {
+public class SimpleSoartService1 extends SimpleSoartService {
 
     @Override
     public AbstractModel call(AbstractModel model) {
 
-        logger.info("Call SimpleBusiness1");
+        logger.info("Call SimpleSoartService1");
         SimpleBusiness1Model sbm = new SimpleBusiness1Model();
         sbm.setText("azerty");
         return sbm;

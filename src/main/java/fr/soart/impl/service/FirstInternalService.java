@@ -4,7 +4,7 @@ import com.test.test.test_api.PortType;
 import com.test.test.test_api.Requete;
 import com.test.test.test_api.Response;
 import fr.soart.engine.db.BusinessCollection;
-import fr.soart.impl.business.order.OrderBusiness1;
+import fr.soart.impl.business.order.OrderSoartService1;
 import fr.soart.impl.converter.FirstServiceToOrderBusiness1Converter;
 import fr.soart.impl.model.OrderBusiness1Model;
 import org.springframework.data.mongodb.core.MongoOperations;
@@ -23,7 +23,7 @@ import javax.jws.WebService;
 public class FirstInternalService implements PortType {
 
     @Resource
-    OrderBusiness1 business1;
+    OrderSoartService1 business1;
     @Resource
     FirstServiceToOrderBusiness1Converter converter;
 

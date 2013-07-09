@@ -30,4 +30,10 @@ public class OrderBusiness1Model extends AbstractModel {
     public void setTata(String tata) {
         this.tata = tata;
     }
+
+    @Override
+    public String getIdCorrelation() {
+        // Non applicable car OrderBusiness
+        return null;
+    }
 }

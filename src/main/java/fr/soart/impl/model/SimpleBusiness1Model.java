@@ -3,7 +3,7 @@ package fr.soart.impl.model;
 import fr.soart.engine.model.AbstractModel;
 
 /**
- * Model de donnée de SimpleBusiness1.
+ * Model de donnée de SimpleSoartService1.
  */
 public class SimpleBusiness1Model extends AbstractModel {
 
@@ -15,5 +15,11 @@ public class SimpleBusiness1Model extends AbstractModel {
 
     public void setText(String text) {
         this.text = text;
+    }
+
+    @Override
+    public String getIdCorrelation() {
+        // Null car service synchrone
+        return null;
     }
 }

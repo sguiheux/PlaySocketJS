@@ -5,9 +5,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Represente un Service business.
+ * Represente un Service.
  */
-public abstract class AbstractBusiness {
+public abstract class SoartService {
 
     /**
      * Logger.
@@ -18,7 +18,7 @@ public abstract class AbstractBusiness {
      * Constructeur.
      * Initialisation du logger
      */
-    public AbstractBusiness() {
+    public SoartService() {
         logger = LoggerFactory.getLogger(this.getClass());
     }
 

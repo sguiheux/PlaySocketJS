@@ -14,7 +14,7 @@ import java.util.List;
 /**
  * Classe abstraite pour la gestion des services d'ordonnancement
  */
-public abstract class AbstractOrderBusiness extends AbstractBusiness {
+public abstract class OrderSoartService extends SoartService {
 
     /**
      * Liste des étapes à ordonnancer.
@@ -39,7 +39,7 @@ public abstract class AbstractOrderBusiness extends AbstractBusiness {
     /**
      * Constructeur du business
      */
-    public AbstractOrderBusiness() {
+    public OrderSoartService() {
         super();
     }
 
@@ -77,7 +77,7 @@ public abstract class AbstractOrderBusiness extends AbstractBusiness {
             for (int i = startStep; i < listEtape.size(); i++) {
                 // recup de l'etape courante et du bean spring associé
                 StepCollection steps = listEtape.get(i);
-                AbstractBusiness a = (AbstractBusiness) context.getBean(steps.getChildId());
+                SoartService a = (SoartService) context.getBean(steps.getChildId());
 
                 // Creation de la requete pour appeler ce traitement
                 AbstractModel modelDestination = a.convertToMyModel(model);
@@ -95,11 +95,8 @@ public abstract class AbstractOrderBusiness extends AbstractBusiness {
                     // Persistence en base
                     SavedBusiness sb = new SavedBusiness();
                     sb.setBusinessName(this.getClass().getName());
-
-                    // TODO Gestion id correlation
-                    sb.setIdCorrelation("");
+                    sb.setIdCorrelation(modelResult.getIdCorrelation());
                     sb.setStepNumber(i);
-
                     sb.setModel(toXml(model));
                     savedBusinessDAO.save(sb);
                     return false;
@@ -115,24 +112,26 @@ public abstract class AbstractOrderBusiness extends AbstractBusiness {
      * Recover des callback
      *
      * @param message          Message du callback
-     * @param simpleBusinessId
+     * @param simpleBusinessId identifiant du composant à l'origine du callback
      */
     public void recover(String message, String simpleBusinessId, String id) {
-        // TODO Gestion id correlation
-        SavedBusiness sb = savedBusinessDAO.findByIdCorrelation("");
+        // Recuperation identifiant de correlation
+        SoartService simpleBusiness = (SoartService) context.getBean(simpleBusinessId);
+        AbstractModel simpleBusinessModel = simpleBusiness.toModel(message);
 
+        // Recuperation du traitement sauvegardé
+        SavedBusiness sb = savedBusinessDAO.findByIdCorrelation(simpleBusinessModel.getIdCorrelation());
+
+        // Recuperation du contexte
         String model = sb.getModel();
         AbstractModel soartModel = toModel(model);
 
-        AbstractBusiness simpleBusiness = (AbstractBusiness) context.getBean(simpleBusinessId);
-        AbstractModel simpleBusinessModel = simpleBusiness.toModel(message);
-
+        // Mise a jour du contexte avec le callback
         updateMyModel(soartModel, simpleBusinessModel);
 
+        // Poursuite du traitement
         int startStep = sb.getStepNumber();
-
-
-        process(soartModel, startStep);
+        process(soartModel, startStep + 1);
 
     }
 
@@ -140,10 +139,11 @@ public abstract class AbstractOrderBusiness extends AbstractBusiness {
 
     /**
      * Met à jour le modele du business à partir d'un autre model
+     *
      * @param myModel Modele à metter à jour
-     * @param model Modele distant
+     * @param model   Modele distant
      */
-    public abstract void updateMyModel(AbstractModel myModel,AbstractModel model);
+    public abstract void updateMyModel(AbstractModel myModel, AbstractModel model);
 
 
 }

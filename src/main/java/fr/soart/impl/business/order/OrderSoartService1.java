@@ -1,6 +1,6 @@
 package fr.soart.impl.business.order;
 
-import fr.soart.engine.business.AbstractOrderBusiness;
+import fr.soart.engine.business.OrderSoartService;
 import fr.soart.engine.model.AbstractModel;
 import fr.soart.impl.converter.OrderBusiness1ToSimpleBusiness1;
 import fr.soart.impl.model.OrderBusiness1Model;
@@ -15,7 +15,7 @@ import javax.annotation.Resource;
  */
 @Component
 @Scope(value = "prototype")
-public class OrderBusiness1 extends AbstractOrderBusiness{
+public class OrderSoartService1 extends OrderSoartService {
 
     public static final String COMPONENT_NAME = "orderBusiness1";
 
@@ -25,7 +25,7 @@ public class OrderBusiness1 extends AbstractOrderBusiness{
     /**
      * Constructeur du business
      */
-    public OrderBusiness1() {
+    public OrderSoartService1() {
         super();
     }
 
