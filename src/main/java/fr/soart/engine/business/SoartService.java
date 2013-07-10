@@ -48,7 +48,7 @@ public abstract class SoartService {
      * @param model à convertir
      * @return  Model de destination
      */
-    protected abstract AbstractModel toModel(String model);
+    public abstract AbstractModel toModel(String model);
 
 
 }

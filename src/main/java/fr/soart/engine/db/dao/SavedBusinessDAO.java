@@ -1,6 +1,6 @@
 package fr.soart.engine.db.dao;
 
-import fr.soart.engine.db.SavedBusiness;
+import fr.soart.engine.db.SavedService;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Component;
@@ -16,8 +16,8 @@ public class SavedBusinessDAO extends AbstractDAO {
      * @param idCorrelation Identifiant de correlation
      * @return Business
      */
-    public SavedBusiness findByIdCorrelation(String idCorrelation) {
+    public SavedService findByIdCorrelation(String idCorrelation) {
         Query searchSavedBusinessQuery = new Query(Criteria.where("idCorrelation").is(idCorrelation));
-        return mongoOperation.findOne(searchSavedBusinessQuery,SavedBusiness.class);
+        return mongoOperation.findOne(searchSavedBusinessQuery,SavedService.class);
     }
 }

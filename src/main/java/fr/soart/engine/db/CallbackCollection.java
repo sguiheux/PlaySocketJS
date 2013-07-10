@@ -16,26 +16,31 @@ public class CallbackCollection {
     /** Message de callback. */
     private String message;
 
-    /** Nom du bean à reveiller. */
-    private String orderBusinessId;
-
     /** Nom du bean d'ou vient le callback. */
-    private String simpleBusinessId;
+    private String simpleSoartServiceId;
 
+    /**
+     * Getter de l'id unique
+     * @return Identifiant unique
+     */
     public String getId() {
         return id;
     }
 
+    /**
+     * Getter du message de callback
+     * @return  Message de callback
+     */
     public String getMessage() {
         return message;
     }
 
-    public String getOrderBusinessId() {
-        return orderBusinessId;
-    }
-
-    public String getSimpleBusinessId() {
-        return simpleBusinessId;
+    /**
+     * Getter de l'id du service à l'origine du callback
+     * @return Identifiant du service d'origine du callback
+     */
+    public String getSimpleSoartServiceId() {
+        return simpleSoartServiceId;
     }
 }
 

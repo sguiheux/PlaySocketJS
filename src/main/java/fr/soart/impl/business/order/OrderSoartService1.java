@@ -57,7 +57,7 @@ public class OrderSoartService1 extends OrderSoartService {
     }
 
     @Override
-    protected AbstractModel toModel(String model) {
+    public AbstractModel toModel(String model) {
         return null;  //To change body of implemented methods use File | Settings | File Templates.
     }
 

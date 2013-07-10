@@ -1,6 +1,6 @@
 package fr.soart.engine.business;
 
-import fr.soart.engine.db.SavedBusiness;
+import fr.soart.engine.db.SavedService;
 import fr.soart.engine.db.StepCollection;
 import fr.soart.engine.db.dao.SavedBusinessDAO;
 import fr.soart.engine.db.dao.StepCollectionDAO;
@@ -91,8 +91,8 @@ public abstract class OrderSoartService extends SoartService {
                 // Si etape asynchrone, sauvegarde en base
                 if (a.isAsynchronous()) {
                     // Persistence en base
-                    SavedBusiness sb = new SavedBusiness();
-                    sb.setBusinessName(this.getClass().getName());
+                    SavedService sb = new SavedService();
+                    sb.setOrderSoartService(this.getClass().getName());
                     if(modelResult.getIdCorrelation() != null){
                         sb.setIdCorrelation(modelResult.getIdCorrelation());
                     } else {
@@ -113,32 +113,25 @@ public abstract class OrderSoartService extends SoartService {
     }
 
     /**
-     * Recover des callback
-     *
-     * @param message          Message du callback
-     * @param simpleBusinessId identifiant du composant à l'origine du callback
+     * Reprise du traitement àpres reception du callback.
+     * @param soartModel  Context actuelle du traitement
+     * @param simpleBusinessModel Message du callback
+     * @param stepNumber Numero d'etape en cours
      */
-    public void recover(String message, String simpleBusinessId) {
-        // Recuperation identifiant de correlation
-        SoartService simpleBusiness = (SoartService) context.getBean(simpleBusinessId);
-        AbstractModel simpleBusinessModel = simpleBusiness.toModel(message);
-
-        // Recuperation du traitement sauvegardé
-        SavedBusiness sb = savedBusinessDAO.findByIdCorrelation(simpleBusinessModel.getIdCorrelation());
-
-        // Recuperation du contexte
-        String model = sb.getModel();
-        AbstractModel soartModel = toModel(model);
-
+    public void recover(AbstractModel soartModel, AbstractModel simpleBusinessModel, int stepNumber) {
         // Mise a jour du contexte avec le callback
         updateMyModel(soartModel, simpleBusinessModel);
 
         // Poursuite du traitement
-        int startStep = sb.getStepNumber();
-        process(soartModel, startStep + 1);
-
+        stepNumber++;
+        process(soartModel, stepNumber);
     }
 
+    /**
+     * Convertit le model en String
+     * @param model Modele
+     * @return   Model en string
+     */
     protected abstract String toXml(AbstractModel model);
 
     /**
@@ -148,6 +141,7 @@ public abstract class OrderSoartService extends SoartService {
      * @param model   Modele distant
      */
     public abstract void updateMyModel(AbstractModel myModel, AbstractModel model);
+
 
 
 }
