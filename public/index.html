@@ -1,0 +1,52 @@
+<html>
+<head>
+	<script src="/javascripts/angular.js"></script>
+</head>
+<body ng-app>
+
+	<script type="text/javascript">
+	function AccueilCtrl($scope) {
+		$scope.data = "Websocket:";
+		
+		$scope.lancerWebSocket = function(){
+			var wsUri = "ws://localhost:9000/websocket";
+			websocket = new WebSocket(wsUri);
+			websocket.onmessage = function(evt) {
+				console.log('Websocket: message recu:'+evt.data);
+				
+				$scope.$apply(function() {
+	                //model update
+	                $scope.data += evt.data;
+	            });
+			};
+			websocket.onopen = function(evt) {
+				console.log('Websocket ouverte');
+			};
+			websocket.onclose = function(evt) {
+				$scope.data = "toto";
+				console.log('Websocket fermee');
+			};
+			
+			websocket.onerror = function(evt) {
+				console.log('Websocket erreur');
+			};
+			
+			
+		};
+		
+	}
+	
+	
+	</script>
+	
+	<div ng-controller="AccueilCtrl">
+		<h2>WebSocket Test</h2>
+		<br/>	
+		<input type="button" ng-click="lancerWebSocket()" value="Start"/>
+		<br/>
+		Result: {{data}}
+	</div>
+
+
+</body>
+</html>
